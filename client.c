@@ -8,6 +8,8 @@
 #include "structs.h" 
 
 
+
+//Linux-Socket-Tester-Multi-threaded-Network-Service-Diagnostics-Tool
 #define SERVER_IP "10.100.0.30" //serverulfacultatii 
 #define SERVER_PORT 5000
 
@@ -18,7 +20,20 @@ int main(){
     int client_socket;
     struct sockaddr_in server_addr;
     char response_buffer[1024] = {0};
+    Command cmd_send;
+    TestTarget target_demo;
+    strncpy(target_demo.id, "Test_Google_HTTP", 127);
+    strncpy(target_demo.adress, "8.8.8.8", MAX_ADR_LEN - 1);
+    target_demo.port = 80;
+    target_demo.type = HTTP_LATENCY;
+    strncpy(target_demo.params, "timeout=5s", MAX_PARAMS_LEN - 1);
 
+
+    cmd_send.cmd = CMD_ADD_TEST;
+
+
+    memset(cmd_send.payload, 0, MAX_PARAMS_LEN);
+    memcpy(cmd_send.payload, &target_demo, sizeof(TestTarget));
     client_socket = socket(AF_INET, SOCK_STREAM, 0);
     if(client_socket < 0){
         perror("ERROR when creating client socket");
@@ -41,14 +56,8 @@ int main(){
         return 1;
     }
     printf("Client connected to: %s:%d\n", SERVER_IP, PORT);
-    Command cmd_send;
-
-    cmd_send.cmd = CMD_STATUS;
-    strncpy(cmd_send.payload, "TESTEZ PENTRU DEMO", MAX_PARAMS_LEN - 1);
-
-    cmd_send.payload[MAX_PARAMS_LEN - 1] = '\0';
     if (send(client_socket, &cmd_send, sizeof(Command), 0) < 0) {
-        perror("Client: Cant sned command");
+        perror("Client: Cant send command");
         close(client_socket);
         return 1;
     }

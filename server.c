@@ -7,7 +7,39 @@
 #include <netinet/in.h>
 #include<pthread.h>
 #include <stdint.h>
+#include "latency_tester.h"
+#include "http_tester.h"
 #define MAX_RESP 1024
+#define NO_OF_TESTS 100
+
+
+
+int test_counter = 0;
+TestTarget tests_suite[100];
+pthread_mutex_t suite_lock = PTHREAD_MUTEX_INITIALIZER; // a mutex that assures us that only one thread can  acces a shared resource at a time, while the others wait
+
+pthread_mutex_t log_lock = PTHREAD_MUTEX_INITIALIZER; // a mutex for the log file
+
+void write_to_log(const char* message){
+    pthread_mutex_lock(&log_lock);
+
+    FILE* f = fopen("logs.txt", "a");
+    if(f == NULL) {
+        perror("Error opening log file");
+        pthread_mutex_unlock(&log_lock);
+        return;
+    }
+
+    time_t when_ran = time(NULL); // when was the test ran
+    char * timestamp = ctime(&when_ran);
+
+    fprintf(f, "[%s]: %s\n", timestamp, message);
+    fprintf(f, "-------------------------------------------------\n");
+    
+    fclose(f);
+    pthread_mutex_unlock(&log_lock);
+}
+
 
 void* handle_client(void *socket_desc){
     int client_socket_fd = (int)(intptr_t) socket_desc;
@@ -33,11 +65,57 @@ void* handle_client(void *socket_desc){
         char response[MAX_RESP] = {0};
 
         switch(received_command.cmd){
-            case CMD_ADD_TEST:
-                sprintf(response, "Comanda ADD_TEST lwk goated? \n Payload: %s", received_command.payload);
+            case CMD_ADD_TEST:{
+                pthread_mutex_lock(&suite_lock); // block access for other threads
+                
+                if(test_counter < NO_OF_TESTS) {
+                    TestTarget new_test;
+                    memcpy(&new_test, received_command.payload, sizeof(TestTarget));
+
+                    tests_suite[test_counter++] = new_test;
+                    
+                    sprintf(response, "SUCCESS: Test %s added, no of tests in suite: %d", new_test.id, test_counter);
+                }
+                else {
+                    sprintf(response, "ERROR: Test Suite is full!");
+
+                }
+                pthread_mutex_unlock(&suite_lock);
                 break;
+            }
             case CMD_START_SUITE:
-                sprintf(response, "Comanda START_SUITE kinda mid but e chill.");
+
+                pthread_mutex_lock(&suite_lock);
+                
+                char log_entry[MAX_RESP] = "REZULTATE:\n"; 
+                char line[256];
+
+
+                for(int i = 0 ; i < test_counter; i++){
+                    if(tests_suite[i].type == HTTP_LATENCY){    
+                        double lat = measure_latency(tests_suite[i].adress, tests_suite[i].port);
+                        int http_ok = run_http_test(tests_suite[i].adress, tests_suite[i].port);
+
+                        if(lat >= 0 && http_ok == 1) {
+                            sprintf(line, "Test %s: SUCCESS (Lat: %.2f ms, HTTP 200 OK)\n", tests_suite[i].id, lat);
+                        } else if (lat >= 0 && http_ok == 0) {
+                            sprintf(line, "Test %s: PARTIAL (Server UP, but HTTP Error)\n", tests_suite[i].id);
+                        } else {
+                            sprintf(line, "Test %s: FAILED (Offline)\n", tests_suite[i].id);
+                        }
+                    
+          
+                    if(strlen(log_entry) + strlen(line) < MAX_RESP - 1) {
+                        strcat(log_entry, line);
+                    }
+                
+                    }
+                }
+                pthread_mutex_unlock(&suite_lock);
+                    
+                write_to_log(log_entry);
+                strncpy(response, log_entry, MAX_RESP - 1);
+                
                 break;
             case CMD_GET_LOGS:
                 sprintf(response, "Comanda GET_LOGS!!!");

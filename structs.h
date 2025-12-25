@@ -43,7 +43,7 @@ enum ServerCommand{
 
 typedef struct{
     enum ServerCommand cmd;
-    char payload[MAX_PARAMS_LEN];
+    char payload[4096];
 } Command;
 
 
