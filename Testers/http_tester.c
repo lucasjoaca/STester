@@ -6,8 +6,9 @@
 #include <string.h>
 #include <unistd.h>
 #include <stdio.h>
+#include <sys/time.h>
 
-int run_http_test(const char* address, int port) {
+int run_http_get_page_test(const char* address, int port) {
     //ipv 4 -> AF_INET
     //TCp -> SOCKSTREAM
     
@@ -39,4 +40,36 @@ int run_http_test(const char* address, int port) {
         return 1; // Succes
     }
     return 0; //failure, server responded but returned error
+}
+
+
+
+int run_http_connect_test(const char* address, int port){
+    int sock = socket(AF_INET, SOCK_STREAM, 0);
+    struct sockaddr_in serv_addr;
+    char buffer[1024] = {0};
+
+    serv_addr.sin_family = AF_INET; // IPv4 addresses
+    serv_addr.sin_port = htons(port);
+    inet_pton(AF_INET, address, &serv_addr.sin_addr);
+
+    struct timeval tv;
+    tv.tv_sec = 2;
+    tv.tv_usec = 0;
+    setsockopt(sock, SOL_SOCKET, SO_RCVTIMEO, (const char*)&tv, sizeof tv);
+
+    if(connect(sock, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0) {
+        close(sock);
+        return -1;// offline sv
+    }
+    char *http_head = "HEAD / HTTP/1.1\r\nHost:locahost\r\nConnection:close\r\n\r\n";
+    send(sock, http_head, strlen(http_head), 0);
+    int valread = recv(sock, buffer, 1024, 0);
+    close(sock);
+
+    if(valread > 0 && strstr(buffer, "HTTP/") != NULL) {
+        return 1;
+    }
+    return 0;
+
 }

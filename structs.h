@@ -12,10 +12,13 @@
 
 enum TestType{
     HTTP_LATENCY,
-    FTP_DOWNLOAD,
+    HTTP_CONNECT,
+    HTTP_GET_PAGE,
+    FTP_LATENCY,
+    FTP_CREATE_DIR,
     FTP_CONNECT,
     FTP_UPLOAD,
-    CUSTOM
+    ECHO_TEST
     
 };
 
