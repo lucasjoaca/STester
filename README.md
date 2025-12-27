@@ -19,7 +19,6 @@ The project includes a `Makefile` for streamlined compilation.
 
     Compile the project:
     Bash
-
 make
 
 Note: This command uses the Makefile to generate the server executable.
@@ -29,8 +28,8 @@ Bash
 
     gcc client.c -o client
 
-📖 Usage Guide
-1. Start the Diagnostic Server
+## 📖 Usage Guide
+### 1. Start the Diagnostic Server
 
 Run the server executable on the machine you wish to use as the testing hub:
 Bash
@@ -39,14 +38,14 @@ Bash
 
 The server listens on the default port 5000.
 
-2. Run the Client
+### 2. Run the Client
 
 Start the interactive client on your local machine:
 Bash
 
 ./client
 
-3. Configuring and Running Tests
+### 3. Configuring and Running Tests
 
 Once the client is running, follow the on-screen menu:
 
@@ -60,7 +59,7 @@ Once the client is running, follow the on-screen menu:
 
     Get Logs: Displays the results of the executed tests (PASSED/FAILED).
 
-🧪 Validation & Testing
+## 🧪 Validation & Testing
 
 The tool has been validated using Wireshark to analyze traffic over different network interfaces:
 
@@ -70,7 +69,7 @@ The tool has been validated using Wireshark to analyze traffic over different ne
 
     Protocol Verification: Validated TCP 3-way handshakes, HTTP status codes (200 OK), and FTP Passive Mode transitions.
 
-📂 Project Structure
+## 📂 Project Structure
 
     server.c - Core logic, thread management, and command parsing.
 
