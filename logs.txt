@@ -1,0 +1,75 @@
+--- SERVER STARTED ---
+[Sat Dec 27 19:10:57 2025
+]: ID: WebTest | HTTP Latency: 0.10 ms | [PASSED]
+-------------------------------------------------
+[Sat Dec 27 19:10:57 2025
+]: ID: 127.0.0.1 | HTTP Connect: READY | [PASSED]
+-------------------------------------------------
+[Sat Dec 27 19:10:57 2025
+]: ID: ECHO | ECHO: Message intact [Hello_Testez] | [PASSED]
+-------------------------------------------------
+[Sat Dec 27 19:10:57 2025
+]: --- SFARSIT SUITA TESTE ---
+
+-------------------------------------------------
+[Sat Dec 27 19:12:14 2025
+]: ID: 127.0.0.1 | Lat: 0.15 ms, GET: 200 OK | [PASSED]
+-------------------------------------------------
+[Sat Dec 27 19:12:14 2025
+]: --- SFARSIT SUITA TESTE ---
+
+-------------------------------------------------
+--- SERVER STARTED ---
+[Sat Dec 27 19:46:21 2025
+]: ID: Conectare | OFFLINE: Connection timed out | [FAILED]
+-------------------------------------------------
+[Sat Dec 27 19:46:21 2025
+]: ID: Test_FTP_CONNECT | Lat: 24.32 ms, FTP: ERR | [FAILED]
+-------------------------------------------------
+[Sat Dec 27 19:46:21 2025
+]: ID: Test_MKD_FTP | FTP MKD: PERMISSION DENIED/FAILED | [FAILED]
+-------------------------------------------------
+[Sat Dec 27 19:46:21 2025
+]: ID: TestFTP_UPLOAD | FTP UPLOAD: AN ERROR OCCURED AND UPLOAD FAILED | [FAILED]
+-------------------------------------------------
+[Sat Dec 27 19:46:21 2025
+]: --- SFARSIT SUITA TESTE ---
+
+-------------------------------------------------
+[Sat Dec 27 19:48:39 2025
+]: ID: Test_FTP_CONNECT | OFFLINE: Connection timed out | [FAILED]
+-------------------------------------------------
+[Sat Dec 27 19:48:39 2025
+]: --- SFARSIT SUITA TESTE ---
+
+-------------------------------------------------
+[Sat Dec 27 19:53:52 2025
+]: ID: TestSvFacultatii_HTTP_LAT | HTTP Latency: 32.73 ms | [PASSED]
+-------------------------------------------------
+[Sat Dec 27 19:53:52 2025
+]: --- SFARSIT SUITA TESTE ---
+
+-------------------------------------------------
+[Sat Dec 27 19:59:19 2025
+]: ID: TestLocalFTP_Conn | Lat: 0.15 ms, FTP: READY | [PASSED]
+-------------------------------------------------
+[Sat Dec 27 19:59:19 2025
+]: ID: Local_FTP_MKD | FTP MKD: DIRECTORY CREATED | [PASSED]
+-------------------------------------------------
+[Sat Dec 27 19:59:19 2025
+]: ID: Test_Local_FTP_STOR | FTP UPLOAD: UPLOADED SUCCESSFULLY | [PASSED]
+-------------------------------------------------
+[Sat Dec 27 19:59:19 2025
+]: --- SFARSIT SUITA TESTE ---
+
+-------------------------------------------------
+[Sat Dec 27 20:02:00 2025
+]: ID: TestParolaGresita_FTP_MKD | FTP MKD: PERMISSION DENIED/FAILED | [FAILED]
+-------------------------------------------------
+[Sat Dec 27 20:02:03 2025
+]: ID: 127.0.0.1 | FTP MKD: PERMISSION DENIED/FAILED | [FAILED]
+-------------------------------------------------
+[Sat Dec 27 20:02:03 2025
+]: --- SFARSIT SUITA TESTE ---
+
+-------------------------------------------------

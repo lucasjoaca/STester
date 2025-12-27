@@ -9,6 +9,8 @@
 #include <stdint.h>
 #include "Testers/latency_tester.h"
 #include "Testers/http_tester.h"
+#include "Testers/echo_tester.h"
+#include "Testers/ftp_tester.h"
 #define MAX_RESP 1024
 #define NO_OF_TESTS 100
 
@@ -19,7 +21,7 @@ pthread_mutex_t suite_lock = PTHREAD_MUTEX_INITIALIZER; // a mutex that assures 
 pthread_mutex_t log_lock = PTHREAD_MUTEX_INITIALIZER; // a mutex for the log file
 /**
  * @brief Writes a message to the "logs.txt" file.
- * * Adds a timestamp to the message and uses a mutex (log_lock) 
+ * * Adds a timestamp to the message and uses a mutex (log_lock)
  * to make sure multiple threads don't write at the same time.
  * * @param message The string containing the test suite results.
  */
@@ -118,67 +120,131 @@ void *handle_client(void *socket_desc)
             {
                 double lat = measure_latency(tests_suite[i].adress, tests_suite[i].port);
                 int success = 0;
-                char details[256] = "";
+                char details[2200] = "";
 
-                if (lat < 0) {
+                if (lat < 0)
+                {
                     success = 0;
                     sprintf(details, "OFFLINE: Connection timed out");
-                } else {
-                    switch (tests_suite[i].type) {
-                        case HTTP_LATENCY:
-                            success = 1;
-                            sprintf(details, "HTTP Latency: %.2f ms", lat);
-                            break;
-                        case HTTP_GET_PAGE:
-                            success = run_http_get_page_test(tests_suite[i].adress, tests_suite[i].port);
-                            sprintf(details, "Lat: %.2f ms, GET: %s", lat, (success ? "200 OK" : "ERR"));
-                            break;
-                        case HTTP_CONNECT:
-                            success = run_http_connect_test(tests_suite[i].adress, tests_suite[i].port);
-                            sprintf(details, "HTTP Connect: %s", (success == 1 ? "READY" : "FAILED"));
-                            break;                        
-                        case FTP_CREATE_DIR:
-                          
-                            success = run_ftp_create_dir(tests_suite[i].adress, tests_suite[i].port, tests_suite[i].params);
-                            sprintf(details, "FTP MKD: %s", (success == 1 ? "DIRECTORY CREATED" : "PERMISSION DENIED/FAILED"));
-                            break;
-                        case FTP_LATENCY:
-                            success = 1;
-                            sprintf(details, "FTP Latency: %.2f ms", lat);
-                            break;
-                        
-                        case FTP_CONNECT:
-                            success = run_ftp_connect_test(tests_suite[i].adress, tests_suite[i].port);
-                            sprintf(details, "Lat: %.2f ms, FTP: %s", lat, (success ? "READY" : "ERR"));
-                            break;
-                        default:
-                            success = 0;
-                            sprintf(details, "Unknown test type");
+                }
+                else
+                {
+                    switch (tests_suite[i].type)
+                    {
+                    case ECHO_TEST:
+                    {
+                        char echo_reply[1024] = {0};
+                        success = run_echo_test(tests_suite[i].adress, tests_suite[i].port, tests_suite[i].params, echo_reply, sizeof(echo_reply));
+
+                        if (success == 1)
+                        {
+                            if (strcmp(tests_suite[i].params, echo_reply) == 0)
+                            {
+                                sprintf(details, "ECHO: Message intact [%s]", echo_reply);
+                            }
+                            else
+                            {
+                                success = 0;
+                                sprintf(details, "ECHO MISMATCH: Sent [%s], Got [%s]", tests_suite[i].params, echo_reply);
+                            }
+                        }
+                        else
+                        {
+                            sprintf(details, "ECHO ERROR: Server unreachable");
+                        }
+                    }
+                    break;
+                    case HTTP_LATENCY:
+                        success = 1;
+                        sprintf(details, "HTTP Latency: %.2f ms", lat);
+                        break;
+                    case HTTP_GET_PAGE:
+                        success = run_http_get_page_test(tests_suite[i].adress, tests_suite[i].port);
+                        sprintf(details, "Lat: %.2f ms, GET: %s", lat, (success ? "200 OK" : "ERR"));
+                        break;
+                    case HTTP_CONNECT:
+                        success = run_http_connect_test(tests_suite[i].adress, tests_suite[i].port);
+                        sprintf(details, "HTTP Connect: %s", (success == 1 ? "READY" : "FAILED"));
+                        break;
+                    case FTP_CREATE_DIR:
+                        success = run_ftp_create_dir_test(tests_suite[i].adress, tests_suite[i].port, tests_suite[i].params);
+                        sprintf(details, "FTP MKD: %s", (success == 1 ? "DIRECTORY CREATED" : "PERMISSION DENIED/FAILED"));
+                        break;
+                    case FTP_UPLOAD:
+                        success = run_ftp_upload_test(tests_suite[i].adress, tests_suite[i].port, tests_suite[i].params);
+                        sprintf(details, "FTP UPLOAD: %s", (success == 1 ? "UPLOADED SUCCESSFULLY" : "AN ERROR OCCURED AND UPLOAD FAILED"));
+                        break;
+                    case FTP_LATENCY:
+                        success = 1;
+                        sprintf(details, "FTP Latency: %.2f ms", lat);
+                        break;
+
+                    case FTP_CONNECT:
+                        success = run_ftp_connect_test(tests_suite[i].adress, tests_suite[i].port);
+                        sprintf(details, "Lat: %.2f ms, FTP: %s", lat, (success ? "READY" : "ERR"));
+                        break;
+                    default:
+                        success = 0;
+                        sprintf(details, "Unknown test type");
                     }
                 }
 
-                sprintf(line, "ID: %s | %s | [%s]\n", 
-                    tests_suite[i].id, details, (success ? "PASSED" : "FAILED"));
-                    strcat(log_entry, line);
+                char current_line[2560];
+                sprintf(current_line, "ID: %s | %s | [%s]",
+                        tests_suite[i].id, details, (success ? "PASSED" : "FAILED"));
+
+                // Scriem imediat rezultatul acestui test in fisier
+                write_to_log(current_line);
             }
+            write_to_log("--- SFARSIT SUITA TESTE ---\n");
             pthread_mutex_unlock(&suite_lock);
+            sprintf(response, "SUCCESS: Suite executed. Check logs for details.");
+            test_counter = 0;
+            break;
+            case CMD_GET_LOGS:
+        {
+            pthread_mutex_lock(&log_lock);
+            
+            // a+ bc we want to create the file i ncase it does not exists
+            FILE *f = fopen("logs.txt", "a+");
+            
+            if (f == NULL) {
+                sprintf(response, "ERROR: Could not open or create logs.txt");
+            } else {
 
-            write_to_log(log_entry);
-            strncpy(response, log_entry, MAX_RESP - 1);
+                fseek(f, 0, SEEK_END);
+                long size = ftell(f);
 
+                if (size == 0) {
+                    sprintf(response, "INFO: Log file is empty.");
+                } else {
+                    long offset = (size > 2000) ? size - 2000 : 0;
+                    fseek(f, offset, SEEK_SET);
+
+                    size_t read_bytes = fread(response, 1, 2000, f);
+                    response[read_bytes] = '\0';
+                }
+                fclose(f);
+            }
+            
+            pthread_mutex_unlock(&log_lock);
             break;
-        case CMD_GET_LOGS:
-            sprintf(response, "Comanda GET_LOGS!!!");
-            break;
-        case CMD_EXIT:
-            sprintf(response, "CMD_EXIT, plec");
-            break;
-        case CMD_STATUS:
-            sprintf(response, "CMD_STATUS: %lu", tid);
-            break;
+        }
+            case CMD_STATUS:
+            {
+                pthread_mutex_lock(&suite_lock);
+                sprintf(response, "STATUS: Server is UP. Suite contains %d/%d tests.", test_counter, NO_OF_TESTS);
+                pthread_mutex_unlock(&suite_lock);
+                break;
+            }
+            case CMD_EXIT:
+            {
+                sprintf(response, "BYE: Closing connection. Server remains active.");
+                break;
+            }
         case CMD_INVALID:
         default:
-            sprintf(response, "ERROR: comanda este invalida");
+            sprintf(response, "ERROR: Unknown command!");
             break;
         }
         printf("Received command: %d \n Response sent: %s\n", received_command.cmd, response);
@@ -236,7 +302,11 @@ int main()
         return 1;
     }
     printf("Serverul STester asculta pe portul:%d...\n", PORT);
-
+    FILE *f = fopen("logs.txt", "a");
+    if (f) {
+        fprintf(f, "--- SERVER STARTED ---\n");
+        fclose(f);
+    }
     while (1)
     {
         printf("Waiting for conn req...\n");
