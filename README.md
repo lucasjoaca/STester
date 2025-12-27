@@ -7,30 +7,6 @@ STester is a Client-Server network diagnostic application developed in C. It is 
 - **Modular Architecture**: Protocol-specific logic is decoupled into standalone modules located in the `Testers/` directory.
 - **Automated Logging**: All test results are timestamped and saved to a local `logs.txt` file, which can be retrieved remotely by the client.
 - **Concurrent Execution**: Utilizes POSIX threads (pthreads) to manage client requests without blocking diagnostic operations.
-- **Passive FTP Handling**: Robust implementation of FTP Passive Mode (PASV) for data transfers through firewalls/VPNs.
-
-## 🛠️ Installation and Compilation
-
-The project includes a `Makefile` for streamlined compilation.
-
-1. **Clone the repository**:
-   ```bash
-   git clone [https://github.com/yourusername/stester.git](https://github.com/yourusername/stester.git)
-   cd stester
-   Ai dreptate, scuze pentru omisiune! Am refăcut varianta completă în engleză, incluzând toate secțiunile necesare pentru ca cineva care îți vizitează profilul de GitHub să înțeleagă exact cum funcționează proiectul de la cap la coadă.
-
-Iată fișierul README.md complet:
-Markdown
-
-# STester - Multi-Protocol Network Diagnostic Tool
-
-STester is a Client-Server network diagnostic application developed in C. It is designed to probe, measure, and log the status of various network services including HTTP, FTP, Echo, and TCP Latency. The server architecture is multi-threaded, allowing it to handle control commands and execute test suites concurrently.
-
-## 🚀 Key Features
-- **Multi-Protocol Support**: Built-in testers for HTTP GET, FTP (Connect, MKD, Upload), Echo services, and TCP Latency.
-- **Modular Architecture**: Protocol-specific logic is decoupled into standalone modules located in the `Testers/` directory.
-- **Automated Logging**: All test results are timestamped and saved to a local `logs.txt` file, which can be retrieved remotely by the client.
-- **Concurrent Execution**: Utilizes POSIX threads (pthreads) to manage client requests without blocking diagnostic operations.
 
 ## 🛠️ Installation and Compilation
 
@@ -62,6 +38,7 @@ Bash
 ./server
 
 The server listens on the default port 5000.
+
 2. Run the Client
 
 Start the interactive client on your local machine:
