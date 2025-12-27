@@ -18,9 +18,8 @@ The project includes a `Makefile` for streamlined compilation.
    cd stester
 
     Compile the project:
-    Bash
-make
-
+```make
+```
 Note: This command uses the Makefile to generate the server executable.
 
 Compile the client:
@@ -32,19 +31,17 @@ Bash
 ### 1. Start the Diagnostic Server
 
 Run the server executable on the machine you wish to use as the testing hub:
-Bash
-
+```
 ./server
-
+```
 The server listens on the default port 5000.
 
 ### 2. Run the Client
 
 Start the interactive client on your local machine:
-Bash
-
+```
 ./client
-
+```
 ### 3. Configuring and Running Tests
 
 Once the client is running, follow the on-screen menu:
