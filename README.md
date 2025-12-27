@@ -18,7 +18,8 @@ The project includes a `Makefile` for streamlined compilation.
    cd stester
 
     Compile the project:
-```make
+```
+make
 ```
 Note: This command uses the Makefile to generate the server executable.
 
