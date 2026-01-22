@@ -30,11 +30,6 @@ The project includes a `Makefile` for streamlined compilation.
    git clone [https://github.com/yourusername/stester.git](https://github.com/yourusername/stester.git)
    cd stester
 
-    Compile the project:
-```
-make
-```
-Note: This command uses the Makefile to generate the server executable.
 
 Compile the client:
 Bash
