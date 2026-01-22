@@ -23,16 +23,15 @@ STester is a Client-Server network diagnostic application developed in C. It is 
 
 ## 🛠️ Installation and Compilation
 
-The project includes a `Makefile` for streamlined compilation.
 
 1. **Clone the repository**:
-   ```bash
+   ```
    git clone [https://github.com/yourusername/stester.git](https://github.com/yourusername/stester.git)
-   cd stester
-
+   cd stester 
+   ```
 
 Compile the client:
-Bash
+
 
     gcc client.c -o client
 
