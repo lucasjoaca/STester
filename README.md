@@ -1,24 +1,25 @@
 ---
 
-## 🎓 Academic Context
+## Overview
 
-This project was developed as part of the **Computer Networks (RC)** curriculum at the **Faculty of Computer Science**, "Alexandru Ioan Cuza" University of Iași (**UAIC**).
+This project was developed as part of the **Computer Networks (RC)** course at the **Faculty of Computer Science**, "Alexandru Ioan Cuza" University of Iași (**UAIC**).
 
-The main objective was to demonstrate a deep understanding of:
+The main objective was to demonstrate understanding of:
 * Socket Programming in **C**.
 * Multi-threaded server architectures (**POSIX Threads**).
-* In-depth analysis of application-level protocols (**HTTP, FTP, ECHO**).
+* Application-level protocols (**HTTP, FTP, ECHO**).
 * Network troubleshooting and performance measurement.
 
 
 # STester - Multi-Protocol Network Diagnostic Tool
 
-STester is a Client-Server network diagnostic application developed in C. It is designed to probe, measure, and log the status of various network services including HTTP, FTP, Echo, and TCP Latency. The server architecture is multi-threaded, allowing it to handle control commands and execute test suites concurrently.
+STester is a Client-Server network diagnostic application developed in C. It is designed to probe, measure, and log the status of various network services such as HTTP, FTP, Echo, and TCP Latency. 
+The server architecture is multi-threaded, allowing it to handle control commands and execute test suites concurrently.
 
-## 🚀 Key Features
+## 🚀 Features
 - **Multi-Protocol Support**: Built-in testers for HTTP GET, FTP (Connect, MKD, Upload), Echo services, and TCP Latency.
 - **Modular Architecture**: Protocol-specific logic is decoupled into standalone modules located in the `Testers/` directory.
-- **Automated Logging**: All test results are timestamped and saved to a local `logs.txt` file, which can be retrieved remotely by the client.
+- **Automated Logging**: All test results are timestamped and saved to a local `logs.txt` file.
 - **Concurrent Execution**: Utilizes POSIX threads (pthreads) to manage client requests without blocking diagnostic operations.
 
 ## 🛠️ Installation and Compilation
